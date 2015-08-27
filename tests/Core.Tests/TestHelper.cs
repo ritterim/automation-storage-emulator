@@ -17,7 +17,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
 
         public static void VerifyAzureStorageEmulatorIsRunning()
         {
-            var tableName = "Test" + Guid.NewGuid().ToString().Replace("-", "");
+            var tableName = "test" + Guid.NewGuid().ToString().Replace("-", "");
             var cloudTable = GetCloudTable(tableName);
 
             var tableExists = cloudTable.Exists();
