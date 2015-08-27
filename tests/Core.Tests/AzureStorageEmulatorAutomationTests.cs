@@ -79,18 +79,22 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void ClearAll_RemovesAllData()
         {
+            const string TestBlobContainer = "testcontainer";
+            const string TestTableName = "testtable";
+            const string TestQueueName = "testqueue";
+
             _sut.Start();
 
-            TestHelper.AddTestBlobToContainer("testcontainer");
-            TestHelper.AddTestRowToTable("testtable");
-            TestHelper.AddTestQueueItemTo("testqueue");
+            TestHelper.AddTestBlobToContainer(TestBlobContainer);
+            TestHelper.AddTestRowToTable(TestTableName);
+            TestHelper.AddTestQueueItemTo(TestQueueName);
 
             Func<bool> blobContainerContainsTestBlob =
-                () => TestHelper.BlobContainerExistsAndContainsTestBlob("testcontainer");
+                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
             Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow("testtable");
+                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
             Func<bool> queueContainsTestMessage =
-                () => TestHelper.QueueExistsAndContainsTestMessage("testqueue");
+                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
 
             Assert.True(blobContainerContainsTestBlob());
             Assert.True(tableContainsTestRow());
@@ -106,12 +110,14 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void ClearBlobs_RemovesBlobData()
         {
+            const string TestBlobContainer = "testcontainer";
+
             _sut.Start();
 
-            TestHelper.AddTestBlobToContainer("testcontainer");
+            TestHelper.AddTestBlobToContainer(TestBlobContainer);
 
             Func<bool> blobContainerContainsTestBlob =
-                () => TestHelper.BlobContainerExistsAndContainsTestBlob("testcontainer");
+                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
 
             Assert.True(blobContainerContainsTestBlob());
 
@@ -123,12 +129,14 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void ClearTables_RemovesTableData()
         {
+            const string TestTableName = "testtable";
+
             _sut.Start();
 
-            TestHelper.AddTestRowToTable("testtable");
+            TestHelper.AddTestRowToTable(TestTableName);
 
             Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow("testtable");
+                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
 
             Assert.True(tableContainsTestRow());
 
@@ -140,12 +148,14 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void ClearQueues_RemovesQueueData()
         {
+            const string TestQueueName = "testqueue";
+
             _sut.Start();
 
-            TestHelper.AddTestQueueItemTo("testqueue");
+            TestHelper.AddTestQueueItemTo(TestQueueName);
 
             Func<bool> queueContainsTestMessage =
-                () => TestHelper.QueueExistsAndContainsTestMessage("testqueue");
+                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
 
             Assert.True(queueContainsTestMessage());
 
