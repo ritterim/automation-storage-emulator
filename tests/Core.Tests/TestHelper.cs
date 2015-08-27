@@ -9,6 +9,9 @@ namespace RimDev.Automation.StorageEmulator.Tests
 {
     public class TestHelper
     {
+        private const string TestBlobName = "TestBlob";
+        private const string TestQueueMessage = "test-queue-message";
+
         private static readonly CloudStorageAccount StorageAccount =
             CloudStorageAccount.DevelopmentStorageAccount;
 
@@ -54,7 +57,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
             var cloudBlobContainer = GetCloudBlobContainer(blobContainer);
             cloudBlobContainer.CreateIfNotExists();
 
-            var blockBlob = cloudBlobContainer.GetBlockBlobReference("TestBlob");
+            var blockBlob = cloudBlobContainer.GetBlockBlobReference(TestBlobName);
 
             blockBlob.UploadText("test");
         }
@@ -64,7 +67,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
             var cloudQueue = GetCloudQueue(queueName);
             cloudQueue.CreateIfNotExists();
 
-            var cloudQueueMessage = new CloudQueueMessage("test-queue-message");
+            var cloudQueueMessage = new CloudQueueMessage(TestQueueMessage);
 
             cloudQueue.AddMessage(cloudQueueMessage);
         }
@@ -78,7 +81,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
                 return false;
             }
 
-            var cloudBlob = cloudBlobContainer.GetBlobReference("TestBlob");
+            var cloudBlob = cloudBlobContainer.GetBlobReference(TestBlobName);
             return cloudBlob.Exists();
         }
 
@@ -114,7 +117,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
 
             var queueMessage = cloudQueue.GetMessage();
 
-            if (queueMessage != null && queueMessage.AsString == "test-queue-message")
+            if (queueMessage != null && queueMessage.AsString == TestQueueMessage)
             {
                 return true;
             }
