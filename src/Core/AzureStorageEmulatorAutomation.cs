@@ -49,27 +49,6 @@ namespace RimDev.Automation.StorageEmulator
             RunWithParameter("clear queue");
         }
 
-        public static string GetPathToStorageEmulatorExecutable()
-        {
-            var paths = new[]
-            {
-                Path.Combine(AzureSdkDirectory, @"Storage Emulator\AzureStorageEmulator.exe"),
-                Path.Combine(AzureSdkDirectory, @"Storage Emulator\WAStorageEmulator.exe")
-            };
-
-            foreach (var path in paths)
-            {
-                if (File.Exists(path))
-                {
-                    return path;
-                }
-            }
-
-            throw new FileNotFoundException(
-                "Unable to locate Azure storage emulator at any of the expected paths.",
-                string.Join(", ", paths));
-        }
-
         public static bool IsEmulatorRunning()
         {
             var path = GetPathToStorageEmulatorExecutable();
@@ -104,6 +83,27 @@ namespace RimDev.Automation.StorageEmulator
 
                 return path;
             }
+        }
+
+        private static string GetPathToStorageEmulatorExecutable()
+        {
+            var paths = new[]
+            {
+                Path.Combine(AzureSdkDirectory, @"Storage Emulator\AzureStorageEmulator.exe"),
+                Path.Combine(AzureSdkDirectory, @"Storage Emulator\WAStorageEmulator.exe")
+            };
+
+            foreach (var path in paths)
+            {
+                if (File.Exists(path))
+                {
+                    return path;
+                }
+            }
+
+            throw new FileNotFoundException(
+                "Unable to locate Azure storage emulator at any of the expected paths.",
+                string.Join(", ", paths));
         }
     }
 }
