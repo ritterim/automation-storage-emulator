@@ -77,20 +77,81 @@ namespace RimDev.Automation.StorageEmulator.Tests
         }
 
         [Fact]
+        public void ClearAll_RemovesAllData()
+        {
+            _sut.Start();
+
+            TestHelper.AddTestBlobToContainer("testcontainer");
+            TestHelper.AddTestRowToTable("testtable");
+            TestHelper.AddTestQueueItemTo("testqueue");
+
+            Func<bool> blobContainerContainsTestBlob =
+                () => TestHelper.BlobContainerExistsAndContainsTestBlob("testcontainer");
+            Func<bool> tableContainsTestRow =
+                () => TestHelper.TableExistsAndContainsTestRow("testtable");
+            Func<bool> queueContainsTestMessage =
+                () => TestHelper.QueueExistsAndContainsTestMessage("testqueue");
+
+            Assert.True(blobContainerContainsTestBlob());
+            Assert.True(tableContainsTestRow());
+            Assert.True(queueContainsTestMessage());
+
+            _sut.ClearAll();
+
+            Assert.False(blobContainerContainsTestBlob());
+            Assert.False(tableContainsTestRow());
+            Assert.False(queueContainsTestMessage());
+        }
+
+        [Fact]
+        public void ClearBlobs_RemovesBlobData()
+        {
+            _sut.Start();
+
+            TestHelper.AddTestBlobToContainer("testcontainer");
+
+            Func<bool> blobContainerContainsTestBlob =
+                () => TestHelper.BlobContainerExistsAndContainsTestBlob("testcontainer");
+
+            Assert.True(blobContainerContainsTestBlob());
+
+            _sut.ClearBlobs();
+
+            Assert.False(blobContainerContainsTestBlob());
+        }
+
+        [Fact]
         public void ClearTables_RemovesTableData()
         {
             _sut.Start();
 
-            TestHelper.AddTestRowToTable("TestTable");
+            TestHelper.AddTestRowToTable("testtable");
 
             Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow("TestTable");
+                () => TestHelper.TableExistsAndContainsTestRow("testtable");
 
             Assert.True(tableContainsTestRow());
 
             _sut.ClearTables();
 
             Assert.False(tableContainsTestRow());
+        }
+
+        [Fact]
+        public void ClearQueues_RemovesQueueData()
+        {
+            _sut.Start();
+
+            TestHelper.AddTestQueueItemTo("testqueue");
+
+            Func<bool> queueContainsTestMessage =
+                () => TestHelper.QueueExistsAndContainsTestMessage("testqueue");
+
+            Assert.True(queueContainsTestMessage());
+
+            _sut.ClearQueues();
+
+            Assert.False(queueContainsTestMessage());
         }
     }
 }

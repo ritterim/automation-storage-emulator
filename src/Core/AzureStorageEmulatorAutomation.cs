@@ -29,9 +29,24 @@ namespace RimDev.Automation.StorageEmulator
             RunWithParameter("stop");
         }
 
+        public void ClearAll()
+        {
+            RunWithParameter("clear all");
+        }
+
+        public void ClearBlobs()
+        {
+            RunWithParameter("clear blob");
+        }
+
         public void ClearTables()
         {
             RunWithParameter("clear table");
+        }
+
+        public void ClearQueues()
+        {
+            RunWithParameter("clear queue");
         }
 
         public static string GetPathToStorageEmulatorExecutable()
