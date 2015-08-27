@@ -81,7 +81,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
                 return false;
             }
 
-            var cloudBlob = cloudBlobContainer.GetBlobReference(TestBlobName);
+            var cloudBlob = cloudBlobContainer.GetBlobReferenceFromServer(TestBlobName);
             return cloudBlob.Exists();
         }
 
