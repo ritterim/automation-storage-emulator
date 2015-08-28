@@ -3,7 +3,7 @@ using Xunit;
 
 namespace RimDev.Automation.StorageEmulator.Tests
 {
-    public class AzureStorageEmulatorAutomationTests : StopAzureStorageEmulatorFixture
+    public class AzureStorageEmulatorAutomationTests : IClassFixture<StopAzureStorageEmulatorFixture>
     {
         private readonly AzureStorageEmulatorAutomation _sut;
 
@@ -15,6 +15,8 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void Dispose_ClosesStorageEmulatorIfStartedByAutomation()
         {
+            new AzureStorageEmulatorAutomation().Stop();
+
             _sut.Start();
 
             _sut.Dispose();
