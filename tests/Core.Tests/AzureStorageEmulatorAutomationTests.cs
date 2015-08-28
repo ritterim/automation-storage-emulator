@@ -40,6 +40,8 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void Start_StartsStorageEmulator()
         {
+            new AzureStorageEmulatorAutomation().Stop();
+
             _sut.Start();
 
             TestHelper.VerifyAzureStorageEmulatorIsRunning();
@@ -60,7 +62,11 @@ namespace RimDev.Automation.StorageEmulator.Tests
         [Fact]
         public void Stop_StopsStorageEmulatorIfStartedByAutomation()
         {
+            new AzureStorageEmulatorAutomation().Stop();
+
             _sut.Start();
+
+            TestHelper.VerifyAzureStorageEmulatorIsRunning();
 
             _sut.Stop();
 
