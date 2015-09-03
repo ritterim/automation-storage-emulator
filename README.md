@@ -1,12 +1,12 @@
 # Automation : Windows Azure Storage Emulator
 
-This library enables programmatic control of the **Windows Azure Storage Emulator** from .NET. This can be useful during integration testing, or anytime you need to work with the **Windows Azure Storage Emulator** from .NET code.
+This library enables programmatic control of the Windows Azure Storage Emulator from .NET. This can be useful during integration testing, or anytime you need to work with the Windows Azure Storage Emulator from .NET code.
 
 ## Prerequisites
 
 - .NET Framework 4.5
-- **Windows Azure Storage Emulator** installed
-  - It's been tested with **Windows Azure Storage Emulator** 4.1.0.0 locally by @kendaleiv and the build passes with **Windows Azure Storage Emulator** 3.3.0.0 on a build agent -- it may work with other versions, or, it may not.
+- Windows Azure Storage Emulator installed
+  - It's been tested with Windows Azure Storage Emulator 4.1.0.0 locally by @kendaleiv and the build passes with Windows Azure Storage Emulator 3.3.0.0 on a build agent -- it may work with other versions, or, it may not.
 
 ## Installation
 
@@ -18,7 +18,7 @@ PM> Install-Package RimDev.Automation.StorageEmulator
 
 ## Quick Start (C#)
 
-To start the **Windows Azure Storage Emulator**:
+To start the Windows Azure Storage Emulator:
 
 ```csharp
 new AzureStorageEmulatorAutomation().Start();
@@ -44,7 +44,7 @@ automation.Stop();
 
 AzureStorageEmulatorAutomation.IsEmulatorRunning(); // should be false
 ```
-`AzureStorageEmulatorAutomation` implements `IDisposable`. The `Dispose` method will only stop the **Windows Azure Storage Emulator** if it was started by the `AzureStorageEmulatorAutomation` instance. We're nice and don't close it if it was opened by a different instance (or, a user opening it manually on their machine).
+`AzureStorageEmulatorAutomation` implements `IDisposable`. The `Dispose` method will only stop the Windows Azure Storage Emulator if it was started by the `AzureStorageEmulatorAutomation` instance. We're nice and don't close it if it was opened by a different instance (or, a user opening it manually on their machine).
 
 An example `IDispoable` implementation might look like:
 
