@@ -2,6 +2,9 @@
 
 This library enables programmatic control of the Windows Azure Storage Emulator from .NET. This can be useful during integration testing, or anytime you need to work with the Windows Azure Storage Emulator from .NET code.
 
+![NuGet Version](https://img.shields.io/nuget/v/RimDev.Automation.StorageEmulator.svg)
+![NuGet Download Count](https://img.shields.io/nuget/dt/RimDev.Automation.StorageEmulator.svg)
+
 ## Prerequisites
 
 - .NET Framework 4.5
