@@ -6,10 +6,6 @@ cache:
 install:
   - ps: md -force .nuget >$null 2>&1
   - ps: "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' -OutFile '.nuget/nuget.exe'"
-  - choco install gitversion.portable -pre -y
-
-before_build:
-  - ps: gitversion $env:APPVEYOR_BUILD_FOLDER /l console /output buildserver /updateAssemblyInfo /nofetch /b $env:APPVEYOR_REPO_BRANCH
 
 configuration: Release
 
@@ -21,3 +17,9 @@ test: off
 artifacts:
   - path: ./msbuild.log
   - path: ./artifacts/*.nupkg
+
+deploy:
+  - provider: Environment
+    name: NuGet
+    on:
+      branch: master
