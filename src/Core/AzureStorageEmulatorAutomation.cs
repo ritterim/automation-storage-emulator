@@ -19,7 +19,7 @@ namespace RimDev.Automation.StorageEmulator
         /// Do one-time initialization needed by the emulator.
         /// Use this before <see cref="Start"/> if you find error "The storage emulator needs to be initialized. Please run the 'init' command."
         /// </summary>
-        public static void Init()
+        public void Init()
         {
             if (!IsEmulatorRunning())
             {

@@ -83,7 +83,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
             Assert.True(tableContainsTestRow());
             Assert.True(queueContainsTestMessage());
 
-            AzureStorageEmulatorAutomation.Init();
+            _sut.Init();
             _sut.Start();
 
             Assert.True(blobContainerContainsTestBlob());

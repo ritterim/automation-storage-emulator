@@ -73,15 +73,11 @@ One or more initialization actions have failed. Resolve these errors before atte
 Error: The storage emulator needs to be initialized. Please run the 'init' command.
 ```
 
-In that case, make sure you call `Init` once before the rest of your tests run:
+In that case, make sure you call `Init` once before calling `Start`:
 
 ```csharp
-public static void BeforeAllTests()
-{
-    AzureStorageEmulatorAutomation.Init();
-
-    //  other initializations...
-}
+    automation.Init();
+    automation.Start();
 ```
 
 ## Thanks
