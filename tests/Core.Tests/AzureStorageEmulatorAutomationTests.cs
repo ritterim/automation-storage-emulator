@@ -60,6 +60,40 @@ namespace RimDev.Automation.StorageEmulator.Tests
         }
 
         [Fact]
+        public void Init_DoesNotClearBlobs()
+        {
+            const string TestBlobContainer = "testcontainer";
+            const string TestTableName = "testtable";
+            const string TestQueueName = "testqueue";
+
+            new AzureStorageEmulatorAutomation().Start();
+
+            TestHelper.AddTestBlobToContainer(TestBlobContainer);
+            TestHelper.AddTestRowToTable(TestTableName);
+            TestHelper.AddTestQueueItemTo(TestQueueName);
+
+            Func<bool> blobContainerContainsTestBlob =
+                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
+            Func<bool> tableContainsTestRow =
+                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
+            Func<bool> queueContainsTestMessage =
+                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
+
+            Assert.True(blobContainerContainsTestBlob());
+            Assert.True(tableContainsTestRow());
+            Assert.True(queueContainsTestMessage());
+
+            _sut.Init();
+            _sut.Start();
+
+            Assert.True(blobContainerContainsTestBlob());
+            Assert.True(tableContainsTestRow());
+            Assert.True(queueContainsTestMessage());
+
+            _sut.ClearAll();
+        }
+
+        [Fact]
         public void Stop_StopsStorageEmulatorIfStartedByAutomation()
         {
             new AzureStorageEmulatorAutomation().Stop();

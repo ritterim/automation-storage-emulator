@@ -115,7 +115,7 @@ namespace RimDev.Automation.StorageEmulator.Tests
                 return false;
             }
 
-            var queueMessage = cloudQueue.GetMessage();
+            var queueMessage = cloudQueue.PeekMessage();
 
             if (queueMessage != null && queueMessage.AsString == TestQueueMessage)
             {
