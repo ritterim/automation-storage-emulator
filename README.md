@@ -64,6 +64,26 @@ using (var automation = new AzureStorageEmulatorAutomation())
 // If it was already running, it should remain running.
 ```
 
+In certain scenarios the Storage Emulator might not be initialized yet, for example running tests on a hosted build agent.
+In those cases, `Start` might time-out and you will encounter this error in your log:
+
+```log
+No available SQL Instance was found.
+One or more initialization actions have failed. Resolve these errors before attempting to run the storage emulator again.
+Error: The storage emulator needs to be initialized. Please run the 'init' command.
+```
+
+In that case, make sure you call `Init` once before the rest of your tests run:
+
+```csharp
+public static void BeforeAllTests()
+{
+    AzureStorageEmulatorAutomation.Init();
+
+    //  other initializations...
+}
+```
+
 ## Thanks
 
 Thanks to [Ritter IM](http://ritterim.com) for supporting OSS.
