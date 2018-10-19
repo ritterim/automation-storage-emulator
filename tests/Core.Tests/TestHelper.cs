@@ -3,7 +3,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace RimDev.Automation.StorageEmulator.Tests
 {
@@ -15,12 +15,12 @@ namespace RimDev.Automation.StorageEmulator.Tests
         private static readonly CloudStorageAccount StorageAccount =
             CloudStorageAccount.DevelopmentStorageAccount;
 
-        public static void VerifyAzureStorageEmulatorIsRunning()
+        public static async Task VerifyAzureStorageEmulatorIsRunningAsync()
         {
             var tableName = "test" + Guid.NewGuid().ToString().Replace("-", "");
             var cloudTable = GetCloudTable(tableName);
 
-            var tableExists = cloudTable.Exists();
+            var tableExists = await cloudTable.ExistsAsync();
             if (tableExists)
             {
                 throw new ApplicationException("Table unexpectedly exists.");
@@ -37,10 +37,10 @@ namespace RimDev.Automation.StorageEmulator.Tests
             }
         }
 
-        public static void AddTestRowToTable(string tableName)
+        public static async Task AddTestRowToTableAsync(string tableName)
         {
             var cloudTable = GetCloudTable(tableName);
-            cloudTable.CreateIfNotExists();
+            await cloudTable.CreateIfNotExistsAsync();
 
             var testTableEntity = new TestTableEntity
             {
@@ -49,73 +49,73 @@ namespace RimDev.Automation.StorageEmulator.Tests
                 TestProperty = "test"
             };
 
-            cloudTable.Execute(TableOperation.Insert(testTableEntity));
+            await cloudTable.ExecuteAsync(TableOperation.Insert(testTableEntity));
         }
 
-        public static void AddTestBlobToContainer(string blobContainer)
+        public static async Task AddTestBlobToContainerAsync(string blobContainer)
         {
             var cloudBlobContainer = GetCloudBlobContainer(blobContainer);
-            cloudBlobContainer.CreateIfNotExists();
+            await cloudBlobContainer.CreateIfNotExistsAsync();
 
             var blockBlob = cloudBlobContainer.GetBlockBlobReference(TestBlobName);
 
-            blockBlob.UploadText("test");
+            await blockBlob.UploadTextAsync("test");
         }
 
-        public static void AddTestQueueItemTo(string queueName)
+        public static async Task AddTestQueueItemToAsync(string queueName)
         {
             var cloudQueue = GetCloudQueue(queueName);
-            cloudQueue.CreateIfNotExists();
+            await cloudQueue.CreateIfNotExistsAsync();
 
             var cloudQueueMessage = new CloudQueueMessage(TestQueueMessage);
 
-            cloudQueue.AddMessage(cloudQueueMessage);
+            await cloudQueue.AddMessageAsync(cloudQueueMessage);
         }
 
-        public static bool BlobContainerExistsAndContainsTestBlob(string blobContainer)
+        public static async Task<bool> BlobContainerExistsAndContainsTestBlobAsync(string blobContainer)
         {
             var cloudBlobContainer = GetCloudBlobContainer(blobContainer);
 
-            if (!cloudBlobContainer.Exists())
+            if (!await cloudBlobContainer.ExistsAsync())
             {
                 return false;
             }
 
-            var cloudBlob = cloudBlobContainer.GetBlobReferenceFromServer(TestBlobName);
-            return cloudBlob.Exists();
+            var cloudBlob = await cloudBlobContainer.GetBlobReferenceFromServerAsync(TestBlobName);
+            return await cloudBlob.ExistsAsync();
         }
 
-        public static bool TableExistsAndContainsTestRow(string tableName)
+        public static async Task<bool> TableExistsAndContainsTestRowAsync(string tableName)
         {
             var cloudTable = GetCloudTable(tableName);
 
-            if (!cloudTable.Exists())
+            if (!await cloudTable.ExistsAsync())
             {
                 return false;
             }
 
-            var results = cloudTable.ExecuteQuery(new TableQuery());
+            var results = (await cloudTable.ExecuteQuerySegmentedAsync(new TableQuery(), new TableContinuationToken())).Results;
 
-            if (results.Count() > 1)
+            if (results?.Count > 1 )
             {
                 throw new ApplicationException(string.Format(
                     "count of test rows was {0}.",
-                    results.Count()));
+                    results?.Count));
             }
 
-            return results.Count() == 1;
+            return results?.Count == 1;
         }
 
-        public static bool QueueExistsAndContainsTestMessage(string queueName)
+        public static async Task<bool> QueueExistsAndContainsTestMessageAsync(string queueName)
         {
             var cloudQueue = GetCloudQueue(queueName);
 
-            if (!cloudQueue.Exists())
+            if (!await cloudQueue.ExistsAsync())
             {
                 return false;
             }
 
-            var queueMessage = cloudQueue.PeekMessage();
+            var queueMessage = await cloudQueue.PeekMessageAsync();
 
             if (queueMessage != null && queueMessage.AsString == TestQueueMessage)
             {

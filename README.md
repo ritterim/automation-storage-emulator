@@ -7,7 +7,7 @@ This library enables programmatic control of the Windows Azure Storage Emulator 
 
 ## Prerequisites
 
-- .NET Framework 4.5
+- .NET Framework 4.5.2 or .Net Standard 2.0
 - Windows Azure Storage Emulator installed
   - It's been tested with Windows Azure Storage Emulator 4.1.0.0 locally by @kendaleiv and the build passes with Windows Azure Storage Emulator 3.3.0.0 on a build agent -- it may work with other versions, or, it may not.
 

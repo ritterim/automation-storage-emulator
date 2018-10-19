@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RimDev.Automation.StorageEmulator.Tests
 {
     public class AzureStorageEmulatorAutomationTests : IClassFixture<StopAzureStorageEmulatorFixture>
     {
-        private readonly AzureStorageEmulatorAutomation _sut;
+        private readonly AzureStorageEmulatorAutomation storageEm;
 
         public AzureStorageEmulatorAutomationTests()
         {
-            _sut = new AzureStorageEmulatorAutomation();
+            storageEm = new AzureStorageEmulatorAutomation();
         }
 
         [Fact]
@@ -17,92 +18,89 @@ namespace RimDev.Automation.StorageEmulator.Tests
         {
             new AzureStorageEmulatorAutomation().Stop();
 
-            _sut.Start();
+            storageEm.Start();
 
-            _sut.Dispose();
+            storageEm.Dispose();
 
             TestHelper.VerifyAzureStorageEmulatorIsNotRunning();
         }
 
         [Fact]
-        public void Dispose_DoesNotCloseStorageEmulatorIfNotStartedByAutomation()
+        public async Task Dispose_DoesNotCloseStorageEmulatorIfNotStartedByAutomation()
         {
             // Use a different instance of automation
             new AzureStorageEmulatorAutomation().Start();
 
-            Assert.False(_sut.StartedByAutomation, "StartedByAutomation should be false before calling dispose");
+            Assert.False(storageEm.StartedByAutomation, "StartedByAutomation should be false before calling dispose");
 
-            _sut.Dispose();
+            storageEm.Dispose();
 
-            TestHelper.VerifyAzureStorageEmulatorIsRunning();
+            await TestHelper.VerifyAzureStorageEmulatorIsRunningAsync();
         }
 
         [Fact]
-        public void Start_StartsStorageEmulator()
+        public async Task Start_StartsStorageEmulator()
         {
             new AzureStorageEmulatorAutomation().Stop();
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.VerifyAzureStorageEmulatorIsRunning();
+            await TestHelper.VerifyAzureStorageEmulatorIsRunningAsync();
         }
 
         [Fact]
-        public void Start_DoesNotThrowIfRanTwice()
+        public async Task Start_DoesNotThrowIfRanTwice()
         {
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.VerifyAzureStorageEmulatorIsRunning();
+            await TestHelper.VerifyAzureStorageEmulatorIsRunningAsync();
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.VerifyAzureStorageEmulatorIsRunning();
+            await TestHelper.VerifyAzureStorageEmulatorIsRunningAsync();
         }
 
         [Fact]
-        public void Init_DoesNotClearBlobs()
+        public async Task Init_DoesNotClearBlobs()
         {
-            const string TestBlobContainer = "testcontainer";
-            const string TestTableName = "testtable";
-            const string TestQueueName = "testqueue";
+            const string testBlobContainer = "testcontainer";
+            const string testTableName = "testtable";
+            const string testQueueName = "testqueue";
 
             new AzureStorageEmulatorAutomation().Start();
 
-            TestHelper.AddTestBlobToContainer(TestBlobContainer);
-            TestHelper.AddTestRowToTable(TestTableName);
-            TestHelper.AddTestQueueItemTo(TestQueueName);
+            await TestHelper.AddTestBlobToContainerAsync(testBlobContainer);
+            await TestHelper.AddTestRowToTableAsync(testTableName);
+            await TestHelper.AddTestQueueItemToAsync(testQueueName);
 
-            Func<bool> blobContainerContainsTestBlob =
-                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
-            Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
-            Func<bool> queueContainsTestMessage =
-                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
+            async Task<bool> BlobContainerContainsTestBlob() => await TestHelper.BlobContainerExistsAndContainsTestBlobAsync(testBlobContainer);
+            async Task<bool> TableContainsTestRow() => await TestHelper.TableExistsAndContainsTestRowAsync(testTableName);
+            async Task<bool> QueueContainsTestMessage() => await TestHelper.QueueExistsAndContainsTestMessageAsync(testQueueName);
 
-            Assert.True(blobContainerContainsTestBlob());
-            Assert.True(tableContainsTestRow());
-            Assert.True(queueContainsTestMessage());
+            Assert.True(await BlobContainerContainsTestBlob());
+            Assert.True(await TableContainsTestRow());
+            Assert.True(await QueueContainsTestMessage());
 
-            _sut.Init();
-            _sut.Start();
+            storageEm.Init();
+            storageEm.Start();
 
-            Assert.True(blobContainerContainsTestBlob());
-            Assert.True(tableContainsTestRow());
-            Assert.True(queueContainsTestMessage());
+            Assert.True(await BlobContainerContainsTestBlob());
+            Assert.True(await TableContainsTestRow());
+            Assert.True(await QueueContainsTestMessage());
 
-            _sut.ClearAll();
+            storageEm.ClearAll();
         }
 
         [Fact]
-        public void Stop_StopsStorageEmulatorIfStartedByAutomation()
+        public async Task Stop_StopsStorageEmulatorIfStartedByAutomation()
         {
             new AzureStorageEmulatorAutomation().Stop();
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.VerifyAzureStorageEmulatorIsRunning();
+            await TestHelper.VerifyAzureStorageEmulatorIsRunningAsync();
 
-            _sut.Stop();
+            storageEm.Stop();
 
             TestHelper.VerifyAzureStorageEmulatorIsNotRunning();
         }
@@ -113,97 +111,91 @@ namespace RimDev.Automation.StorageEmulator.Tests
             // Use a different instance of automation
             new AzureStorageEmulatorAutomation().Start();
 
-            _sut.Stop();
+            storageEm.Stop();
 
             TestHelper.VerifyAzureStorageEmulatorIsNotRunning();
         }
 
         [Fact]
-        public void ClearAll_RemovesAllData()
+        public async Task ClearAll_RemovesAllData()
         {
-            const string TestBlobContainer = "testcontainer";
-            const string TestTableName = "testtable";
-            const string TestQueueName = "testqueue";
+            const string testBlobContainer = "testcontainer";
+            const string testTableName = "testtable";
+            const string testQueueName = "testqueue";
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.AddTestBlobToContainer(TestBlobContainer);
-            TestHelper.AddTestRowToTable(TestTableName);
-            TestHelper.AddTestQueueItemTo(TestQueueName);
+            await TestHelper.AddTestBlobToContainerAsync(testBlobContainer);
+            await TestHelper.AddTestRowToTableAsync(testTableName);
+            await TestHelper.AddTestQueueItemToAsync(testQueueName);
 
-            Func<bool> blobContainerContainsTestBlob =
-                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
-            Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
-            Func<bool> queueContainsTestMessage =
-                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
+            async Task<bool> BlobContainerContainsTestBlob() => await TestHelper.BlobContainerExistsAndContainsTestBlobAsync(testBlobContainer);
+            async Task<bool> TableContainsTestRow() => await TestHelper.TableExistsAndContainsTestRowAsync(testTableName);
+            async Task<bool> QueueContainsTestMessage() => await TestHelper.QueueExistsAndContainsTestMessageAsync(testQueueName);
 
-            Assert.True(blobContainerContainsTestBlob());
-            Assert.True(tableContainsTestRow());
-            Assert.True(queueContainsTestMessage());
+            Assert.True(await BlobContainerContainsTestBlob());
+            Assert.True(await TableContainsTestRow());
+            Assert.True(await QueueContainsTestMessage());
 
-            _sut.ClearAll();
+            storageEm.ClearAll();
 
-            Assert.False(blobContainerContainsTestBlob());
-            Assert.False(tableContainsTestRow());
-            Assert.False(queueContainsTestMessage());
+            Assert.False(await BlobContainerContainsTestBlob());
+            Assert.False(await TableContainsTestRow());
+            Assert.False(await QueueContainsTestMessage());
         }
 
         [Fact]
-        public void ClearBlobs_RemovesBlobData()
+        public async Task ClearBlobs_RemovesBlobData()
         {
-            const string TestBlobContainer = "testcontainer";
+            const string testBlobContainer = "testcontainer";
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.AddTestBlobToContainer(TestBlobContainer);
+            await TestHelper.AddTestBlobToContainerAsync(testBlobContainer);
 
-            Func<bool> blobContainerContainsTestBlob =
-                () => TestHelper.BlobContainerExistsAndContainsTestBlob(TestBlobContainer);
+            async Task<bool> BlobContainerContainsTestBlob() => await TestHelper.BlobContainerExistsAndContainsTestBlobAsync(testBlobContainer);
 
-            Assert.True(blobContainerContainsTestBlob());
+            Assert.True(await BlobContainerContainsTestBlob());
 
-            _sut.ClearBlobs();
+            storageEm.ClearBlobs();
 
-            Assert.False(blobContainerContainsTestBlob());
+            Assert.False(await BlobContainerContainsTestBlob());
         }
 
         [Fact]
-        public void ClearTables_RemovesTableData()
+        public async Task ClearTables_RemovesTableData()
         {
-            const string TestTableName = "testtable";
+            const string testTableName = "testtable";
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.AddTestRowToTable(TestTableName);
+            await TestHelper.AddTestRowToTableAsync(testTableName);
 
-            Func<bool> tableContainsTestRow =
-                () => TestHelper.TableExistsAndContainsTestRow(TestTableName);
+            async Task<bool> TableContainsTestRow() => await TestHelper.TableExistsAndContainsTestRowAsync(testTableName);
 
-            Assert.True(tableContainsTestRow());
+            Assert.True(await TableContainsTestRow());
 
-            _sut.ClearTables();
+            storageEm.ClearTables();
 
-            Assert.False(tableContainsTestRow());
+            Assert.False(await TableContainsTestRow());
         }
 
         [Fact]
-        public void ClearQueues_RemovesQueueData()
+        public async Task ClearQueues_RemovesQueueData()
         {
-            const string TestQueueName = "testqueue";
+            const string testQueueName = "testqueue";
 
-            _sut.Start();
+            storageEm.Start();
 
-            TestHelper.AddTestQueueItemTo(TestQueueName);
+            await TestHelper.AddTestQueueItemToAsync(testQueueName);
 
-            Func<bool> queueContainsTestMessage =
-                () => TestHelper.QueueExistsAndContainsTestMessage(TestQueueName);
+            async Task<bool> QueueContainsTestMessage() => await TestHelper.QueueExistsAndContainsTestMessageAsync(testQueueName);
 
-            Assert.True(queueContainsTestMessage());
+            Assert.True(await QueueContainsTestMessage());
 
-            _sut.ClearQueues();
+            storageEm.ClearQueues();
 
-            Assert.False(queueContainsTestMessage());
+            Assert.False(await QueueContainsTestMessage());
         }
     }
 }
