@@ -2,28 +2,14 @@
 pushd %~dp0
 setlocal enabledelayedexpansion
 
-set PROGRAMSROOT=%PROGRAMFILES%
-if defined PROGRAMFILES(X86) set PROGRAMSROOT=%PROGRAMFILES(X86)%
-
-set CACHED_NUGET=%LOCALAPPDATA%\NuGet\NuGet.exe
-if exist "%CACHED_NUGET%" goto CopyNuGet
-
-echo Downloading latest version of NuGet.exe...
-if not exist "%LOCALAPPDATA%\NuGet" @md "%LOCALAPPDATA%\NuGet"
-@powershell -NoProfile -ExecutionPolicy Unrestricted -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest 'https://www.nuget.org/nuget.exe' -OutFile '%CACHED_NUGET%'"
-
-:CopyNuGet
-echo Copying NuGet...
-if exist .nuget\nuget.exe goto :Build
-if not exist .nuget @md .nuget
-@copy "%CACHED_NUGET%" .nuget\nuget.exe > nul
+rmdir /s /q "artifacts"
 
 :Build
 echo.
 echo *** STARTING BUILD ***
 echo.
 
-dotnet build src/core/core.csproj --configuration release
+dotnet build src/core/core.csproj --configuration Release
 if %ERRORLEVEL% neq 0 goto :BuildFail
 
 echo.
@@ -34,7 +20,7 @@ echo.
 echo *** STARTING TESTS ***
 echo.
 
-dotnet test tests/core.tests/core.tests.csproj --configuration release
+dotnet test tests/core.tests/core.tests.csproj --configuration Release
 if %ERRORLEVEL% neq 0 goto :TestFail
 
 echo.
@@ -45,7 +31,7 @@ echo.
 echo *** STARTING PACK ***
 echo.
 
-dotnet pack src/core/core.csproj --configuration release
+dotnet pack src/core/core.csproj --configuration Release --no-build --output ../../artifacts
 if %ERRORLEVEL% neq 0 goto :PackFail
 
 echo.
