@@ -4,8 +4,9 @@
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup>    
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  <PropertyGroup>
+    <AssemblyName>RimDev.Automation.StorageEmulator</AssemblyName>
+    <RootNamespace>RimDev.Automation.StorageEmulator</RootNamespace>
     <PackageId>RimDev.Automation.StorageEmulator</PackageId>
     <Authors>Ritter Insurance Marketing</Authors>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ritterim/automation-storage-emulator/master/LICENSE.txt</PackageLicenseUrl>
