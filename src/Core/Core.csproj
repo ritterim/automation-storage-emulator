@@ -8,6 +8,7 @@
     <AssemblyName>RimDev.Automation.StorageEmulator</AssemblyName>
     <RootNamespace>RimDev.Automation.StorageEmulator</RootNamespace>
     <PackageId>RimDev.Automation.StorageEmulator</PackageId>
+    <Description>Programatically control Azure Storage Emulator.</Description>
     <Authors>Ritter Insurance Marketing</Authors>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ritterim/automation-storage-emulator/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ritterim/automation-storage-emulator</PackageProjectUrl>
